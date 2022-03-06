@@ -1,0 +1,24 @@
+{
+  "name": "@it5007-tutorial4/server",
+  "version": "1.0.0",
+  "main": "./dist/index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/express": "^4.17.13",
+    "@types/node": "^17.0.12",
+    "nodemon": "^2.0.15",
+    "ts-node": "^10.6.0",
+    "typescript": "^4.5.5"
+  },
+  "dependencies": {
+    "apollo-server-express": "^3.6.3",
+    "express": "^4.17.2",
+    "mongodb": "^4.4.1"
+  },
+  "scripts": {
+    "dbtest": "node ./dist/cmd/dbtest.js",
+    "dev": "nodemon ./src/index.ts",
+    "build": "tsc",
+    "start": "node dist"
+  }
+}

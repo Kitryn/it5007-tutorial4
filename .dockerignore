@@ -1,0 +1,10 @@
+# All node_modules
+node_modules
+**/node_modules
+
+# All secrets
+**/.env.local
+**/.env.*.local
+
+*/dist
+*/build

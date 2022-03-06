@@ -60,26 +60,6 @@ async function insertTestManifest(
   return objectId;
 }
 
-// async function updateTestManifest(
-//   client: MongoClient,
-//   manifestCollection: Collection<Document>,
-//   counterCollection: Collection<Document>,
-//   objectIdToUpdate: ObjectId,
-// ): Promise<ObjectId | null> {
-//   const session = client.startSession();
-//   let objectId = null;
-//   try {
-//     await session.withTransaction(async () => {
-
-//     });
-//   } catch (err: any) {
-//     console.error(`Transaction aborted with error: ${err}`);
-//   } finally {
-//     await session.endSession();
-//   }
-//   return objectId;
-// }
-
 async function main() {
   console.log(`Starting mongodb initialization test`);
 

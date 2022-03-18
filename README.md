@@ -17,22 +17,35 @@ $ docker-compose -f docker-compose.yml -f docker-compose.dbtest.yml up --abort-o
 Expected output:
 
 ```
+...
+<snip>
+...
 webapp_1  | yarn run v1.22.17
 webapp_1  | $ yarn workspace @it5007-tutorial4/server dbtest
 webapp_1  | $ node ./dist/cmd/dbtest.js
 webapp_1  | Starting mongodb initialization test
 webapp_1  | Connected to mongodb://mongo:27017/trainbookings
-webapp_1  | 0 records found and deleted in collection manifests
-webapp_1  | 0 records found and deleted in collection counters
+webapp_1  | Initializing db schema
+webapp_1  | Dropping manifests and counters collection
+webapp_1  | Dropped 2 of 2 collection
+webapp_1  | Initializing indexes for manifests collection
+webapp_1  | [ 'id_1', 'date_1', 'seats.name_1', 'seats.phone_1' ]
 webapp_1  | === Testing CREATE operations ===
-webapp_1  | Manifest successfully inserted
-webapp_1  | new ObjectId("62239c7491209806a3f4def2")
-webapp_1  | Inserted manifest with id 62239c7491209806a3f4def2
+webapp_1  | 1 manifests successfully inserted
+webapp_1  | {
+webapp_1  |   '0': ObjectId {
+webapp_1  |     [Symbol(id)]: Buffer(12) [Uint8Array] [
+webapp_1  |       98,  40, 177, 146, 89,
+webapp_1  |       17,  91, 160,  22, 29,
+webapp_1  |       39, 172
+webapp_1  |     ]
+webapp_1  |   }
+webapp_1  | }
+webapp_1  | Inserted manifest with id 6228b19259115ba0161d27ac
 webapp_1  | === Testing READ operations ===
 webapp_1  | Found manifest
 webapp_1  | {
-webapp_1  |   "_id": "62239c7491209806a3f4def2",
-webapp_1  |   "id": 1,
+webapp_1  |   "_id": "6228b19259115ba0161d27ac",
 webapp_1  |   "date": "2022-01-24T16:00:00.000Z",
 webapp_1  |   "seats": [
 webapp_1  |     {
@@ -41,13 +54,13 @@ webapp_1  |       "name": "Sally",
 webapp_1  |       "phone": "9123 4567",
 webapp_1  |       "date": "2022-01-24T00:00:00.000Z"
 webapp_1  |     }
-webapp_1  |   ]
+webapp_1  |   ],
+webapp_1  |   "id": 1
 webapp_1  | }
 webapp_1  | === Testing UPDATE operation ===
-webapp_1  | Updated document 62239c7491209806a3f4def2
+webapp_1  | Updated document 6228b19259115ba0161d27ac
 webapp_1  | {
-webapp_1  |   "_id": "62239c7491209806a3f4def2",
-webapp_1  |   "id": 1,
+webapp_1  |   "_id": "6228b19259115ba0161d27ac",
 webapp_1  |   "date": "2022-01-24T16:00:00.000Z",
 webapp_1  |   "seats": [
 webapp_1  |     {
@@ -62,12 +75,13 @@ webapp_1  |       "name": "Nally",
 webapp_1  |       "phone": "8123 4567",
 webapp_1  |       "date": "2022-01-24T01:00:00.000Z"
 webapp_1  |     }
-webapp_1  |   ]
+webapp_1  |   ],
+webapp_1  |   "id": 1
 webapp_1  | }
 webapp_1  | === Testing DELETE operation ===
 webapp_1  | Deleted 1 rows
 webapp_1  | Finished testing, bye
-webapp_1  | Done in 0.79s.
+webapp_1  | Done in 0.75s.
 ```
 
 ## Task 2: Railway Reservation Webapp
@@ -89,38 +103,10 @@ webapp_1  | Done in 0.79s.
 ### Server
 
 ```
-$ docker-compose -f docker-compose.dev.yml up --abort-on-container-exit --exit-code-from webapp
+$ docker-compose up --abort-on-container-exit --exit-code-from webapp
 ```
 
 ## DB schema
-
-We don't use `mongoose` in here, but if we were:
-
-### manifests
-
-```js
-const manifestSchema = new Schema({
-  id: { type: Number, index: { unique: true } },
-  date: { type: Date, index: true },
-  seats: [
-    {
-      sn: Number,
-      name: { type: String, index: true },
-      phone: { type: String, index: true },
-      date: { type: Date, default: Date.now },
-    },
-  ],
-});
-```
-
-### counters
-
-```js
-const counterSchema = new Schema({
-  _id: { type: String, index: { unique: true } },
-  current: Number,
-});
-```
 
 ## Teardown
 

@@ -1,3 +1,4 @@
+import { ApolloError } from "@apollo/client";
 import React, { useEffect, useRef, useState } from "react";
 import { Reservation } from "../../models";
 
@@ -9,21 +10,27 @@ interface AddReservationForm {
 export default function AddTravelerPane({
   selectedSeat,
   addTraveler,
+  apolloError,
 }: {
   selectedSeat: number | null;
-  addTraveler: (r?: Omit<Reservation, "date">) => Promise<boolean>;
+  addTraveler: (r?: Omit<Reservation, "date">) => boolean;
+  apolloError?: ApolloError | Error;
 }) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
+    if (apolloError != null) {
+      setErrorMessage("Something went wrong when posting to the server!");
+      setTimeout(() => setErrorMessage(null), 2500);
+    }
     if (errorMessage != null) {
       setTimeout(() => setErrorMessage(null), 2500);
     }
-  }, [errorMessage]);
+  }, [errorMessage, apolloError]);
 
-  const handleAdd = async (reservation?: Reservation) => {
-    const success = await addTraveler(reservation);
+  const handleAdd = (reservation?: Reservation) => {
+    const success = addTraveler(reservation);
     if (!success) {
       setErrorMessage("Unable to add reservation, are seats full?");
       return;

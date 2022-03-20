@@ -1,3 +1,4 @@
+import { ApolloError } from "@apollo/client";
 import { useState } from "react";
 import { Manifest, Reservation } from "../../models";
 import AddTravelerPane from "./AddTravelerPane";
@@ -8,18 +9,20 @@ export default function Panels({
   addTraveler,
   deleteTraveler,
   selectedSeat,
+  apolloError,
 }: {
   manifest: Manifest;
-  addTraveler: (r?: Omit<Reservation, "date">) => Promise<boolean>;
+  addTraveler: (r?: Omit<Reservation, "date">) => boolean;
   deleteTraveler: (sn: number[]) => void;
   selectedSeat: number | null;
+  apolloError?: ApolloError | Error;
 }) {
   const [activePanelIndex, setActivePanelIndex] = useState<number>(0);
 
   const panels = ["Manifest", "Add Traveler"];
   const panelComponents = [
     <ManifestPane manifest={manifest} deleteTraveler={deleteTraveler} />,
-    <AddTravelerPane addTraveler={addTraveler} selectedSeat={selectedSeat} />,
+    <AddTravelerPane addTraveler={addTraveler} selectedSeat={selectedSeat} apolloError={apolloError} />,
   ];
 
   return (

@@ -3,7 +3,7 @@ import "./components/NavBar.css";
 
 import NavBar from "./components/NavBar";
 import NavBarItem from "./components/NavBarItem";
-import { useMutation, useQuery } from "@apollo/client";
+import { ApolloError, useMutation, useQuery } from "@apollo/client";
 import {
   ADD_RESERVATION,
   DeletedConfirmation,
@@ -15,24 +15,25 @@ import {
   RESET_ALL,
   RESET_TO_RANDOM,
 } from "./models";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import SideBar from "./components/SideBar";
 import BookingPage from "./components/BookingPage/BookingPage";
 import HomePage from "./components/HomePage";
-import { createRandomReservation } from "@it5007-tutorial4/common";
-import { getRandomSeatNumber } from "./util";
 
 function App() {
   /**
    * Set up GQL queries
    */
+  // GQL error handler
+  // spaghetti -- either use context or other state management lib
+  const [gqlError, setGqlError] = useState<ApolloError | Error | undefined>(undefined);
+  const onGqlError = (err: ApolloError) => {
+    setGqlError(err);
+    setTimeout(() => setGqlError(undefined), 5000);
+  };
+
   // Load all manifests
-  const {
-    loading: loadingManifests,
-    error: errorManifests,
-    data: dataManifests,
-    refetch,
-  } = useQuery<{ manifests: Manifest[] }>(MANIFESTS);
+  const { data: dataManifests, refetch } = useQuery<{ manifests: Manifest[] }>(MANIFESTS);
 
   const manifests = (dataManifests?.manifests ?? null)?.map((m) => {
     return {
@@ -43,26 +44,28 @@ function App() {
   });
 
   // Reset all manifests
-  const [resetAllMutation, { loading: loadingResetAllMutation, error: errorResetAllMutation, data: dataResetAll }] =
-    useMutation<{ resetAllManifests: boolean }>(RESET_ALL);
+  const [resetAllMutation] = useMutation<{ resetAllManifests: boolean }>(RESET_ALL);
 
   // Reset to random seats
-  const [
-    resetRandomMutation,
-    { loading: loadingResetRandomMutation, error: errorResetRandomMutation, data: dataResetRandom },
-  ] = useMutation<{ resetToRandomManifests: boolean }>(RESET_TO_RANDOM);
+  const [resetRandomMutation] = useMutation<{ resetToRandomManifests: boolean }>(RESET_TO_RANDOM);
 
   // Add reservation
-  const [
-    addReservationMutation,
-    { loading: loadingAddReservationMutation, error: errorAddReservationMutation, data: dataAddReservationMutation },
-  ] = useMutation<{ addReservation: ReservationConfirmation }>(ADD_RESERVATION);
+  const [addReservationMutation, { data: dataAddReservationMutation }] = useMutation<{
+    addReservation: ReservationConfirmation;
+  }>(ADD_RESERVATION, { onError: (err) => onGqlError(err) });
 
   // Delete reservation(s)
-  const [
-    delReservationsMutation,
-    { loading: loadingDelReservationMutation, error: errorDelReservationMutation, data: dataDelReservationMutation },
-  ] = useMutation<{ deleteReservation: DeletedConfirmation }>(DELETE_RESERVATION);
+  const [delReservationsMutation, { data: dataDelReservationMutation }] = useMutation<{
+    deleteReservation: DeletedConfirmation;
+  }>(DELETE_RESERVATION, { onError: (err) => onGqlError(err) });
+
+  // Check data on updates
+  if (
+    dataAddReservationMutation?.addReservation.status === "rejected" ||
+    dataDelReservationMutation?.deleteReservation.status === "rejected"
+  ) {
+    setGqlError(new Error(`Invalid parameters submitted to the server`));
+  }
 
   /**
    * Callbacks to handle state
@@ -114,26 +117,6 @@ function App() {
         <NavBarItem hasDropdown={true}>
           <button>Options</button>
           <div className="dropdown flex flex-col">
-            <button
-              onClick={async () => {
-                if (activeManifestId == null) return;
-                // Hacky! memo this in the future
-                const m = manifests?.filter((m) => m._id === activeManifestId);
-
-                if (m == null || m.length === 0) {
-                  console.error(`No manifest found, or no active manifest`);
-                  return;
-                }
-
-                const sn = getRandomSeatNumber(m[0]);
-                const randomReservation = createRandomReservation(sn);
-                const r = await addReservation(activeManifestId, randomReservation);
-                console.log(r);
-                console.log(dataAddReservationMutation);
-              }}
-            >
-              Add to current
-            </button>
             <button onClick={() => deleteAll()}>Clear all</button>
             <button onClick={() => resetToRandom()}>Reset to Random</button>
           </div>
@@ -152,6 +135,7 @@ function App() {
             activeManifest={activeManifest}
             addReservation={addReservation}
             deleteReservations={deleteReservations}
+            apolloError={gqlError}
           />
         )}
       </div>

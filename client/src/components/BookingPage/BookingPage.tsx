@@ -1,3 +1,4 @@
+import { ApolloError } from "@apollo/client";
 import { createRandomReservation } from "@it5007-tutorial4/common";
 import { useState } from "react";
 import { Manifest, Reservation } from "../../models";
@@ -10,14 +11,16 @@ export default function BookingPage({
   activeManifest,
   addReservation,
   deleteReservations,
+  apolloError,
 }: {
   activeManifest: Manifest;
   addReservation: (manifestId: string, reservation: Omit<Reservation, "date">) => Promise<void>;
   deleteReservations: (manifestId: string, seats: number[]) => Promise<void>;
+  apolloError?: ApolloError | Error;
 }) {
   const [selectedSeat, setSelectedSeat] = useState<number | null>(null);
 
-  const addTravelerToActiveManifest = async (reservation?: Omit<Reservation, "date">): Promise<boolean> => {
+  const addTravelerToActiveManifest = (reservation?: Omit<Reservation, "date">): boolean => {
     if (reservation == null) {
       let sn: number;
       try {
@@ -28,20 +31,16 @@ export default function BookingPage({
       reservation = createRandomReservation(sn);
     }
 
-    // TODO: error handling
-    try {
-      await addReservation(activeManifest._id, reservation);
-    } catch (err: any) {
-      console.error(`Got error ${err} while adding reservation ${reservation}`);
-      return false;
-    }
+    // we let apollo-client do our error handling
+    addReservation(activeManifest._id, reservation);
     setSelectedSeat(null);
     return true;
   };
 
-  const deleteTravelerOnActiveManifest = async (seatNumbers: number[]) => {
-    await deleteReservations(activeManifest._id, seatNumbers);
+  const deleteTravelerOnActiveManifest = (seatNumbers: number[]): boolean => {
+    deleteReservations(activeManifest._id, seatNumbers);
     setSelectedSeat(null);
+    return true;
   };
 
   return (
@@ -53,14 +52,9 @@ export default function BookingPage({
           addTraveler={addTravelerToActiveManifest}
           deleteTraveler={deleteTravelerOnActiveManifest}
           selectedSeat={selectedSeat}
+          apolloError={apolloError}
         />
       </div>
-      {/* <BookingControlCenter
-        manifest={allManifests[activeManifestIndex]}
-        addTraveler={addTravelerToActiveManifest}
-        deleteTraveler={deleteTravelerOnActiveManifest}
-        selectedSeat={selectedSeat}
-      /> */}
     </div>
   );
 }

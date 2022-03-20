@@ -1,6 +1,7 @@
 import "reflect-metadata";
 import mongoose from "mongoose";
 import express from "express";
+import path from "path";
 import { createRandomManifests, ManifestModel } from "../models/Manifest";
 import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
@@ -35,6 +36,11 @@ async function main() {
   });
   await apolloServer.start();
   apolloServer.applyMiddleware({ app, cors: true });
+
+  app.use(express.static("build"));
+  app.get("*", (req, res) => {
+    res.sendFile(path.resolve(__dirname, "..", "build", "index.html"));
+  });
 
   app.listen(PORT, () => {
     console.log(`Server started on ${PORT}`);

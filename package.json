@@ -11,10 +11,11 @@
     "server"
   ],
   "scripts": {
-    "server:build": "yarn workspace @it5007-tutorial4/common build && yarn workspace @it5007-tutorial4/server build",
+    "common:build": "yarn workspace @it5007-tutorial4/common build",
     "client:build": "yarn workspace @it5007-tutorial4/client build",
+    "server:build": "yarn workspace @it5007-tutorial4/server build",
     "dbtest": "yarn workspace @it5007-tutorial4/server dbtest",
     "dev": "yarn workspace @it5007-tutorial4/server dev",
-    "start": "echo 'Run Start'"
+    "server:start": "yarn workspace @it5007-tutorial4/server start"
   }
 }

@@ -21,7 +21,8 @@
     "jsx": "react-jsx",
     "paths": {
       "@it5007-tutorial4/client": ["./src"],
-      "@it5007-tutorial4/server": ["../server/dist"]
+      "@it5007-tutorial4/server": ["../server/dist"],
+      "@it5007-tutorial4/common": ["../common/dist"]
     }
   },
   "include": [

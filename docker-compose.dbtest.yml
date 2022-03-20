@@ -4,6 +4,3 @@ services:
   webapp:
     command: yarn dbtest
   
-  mongo:
-    logging:
-      driver: none

@@ -25,6 +25,6 @@
     "dbtest": "node ./dist/cmd/dbtest.js",
     "dev": "tsnd --respawn ./src/cmd/server.ts",
     "build": "tsc",
-    "start": "node dist"
+    "start": "node ./dist/cmd/server.js"
   }
 }

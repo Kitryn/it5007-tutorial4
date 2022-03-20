@@ -1,6 +1,5 @@
 import { prop } from "@typegoose/typegoose";
 import { Field, ObjectType, Int, InputType } from "type-graphql";
-import { randomName, randomTel } from "@it5007-tutorial4/common";
 
 @ObjectType()
 export class Reservation {

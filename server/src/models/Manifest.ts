@@ -1,9 +1,9 @@
-import mongoose from "mongoose";
 import { ObjectId } from "mongodb";
 import { getModelForClass, prop, ReturnModelType } from "@typegoose/typegoose";
 import { Field, ID, ObjectType } from "type-graphql";
 import { Reservation } from "./Reservation";
 import { createRandomReservation } from "@it5007-tutorial4/common";
+import { BlacklistEntryModel } from "./Blacklist";
 
 @ObjectType()
 export class Manifest {
@@ -27,6 +27,11 @@ export class Manifest {
      * NOTE: this is NOT atomic
      * Mongo doesn't support transactions in a standalone environment, requires a replica set, so no transactions here
      */
+    const allow = BlacklistEntryModel.isInBlacklist(reservation.name);
+    if (!allow) {
+      throw new Error(`${reservation.name} is blacklisted, disallowing addition`);
+    }
+
     try {
       const res = await this.findById(new ObjectId(manifestId));
       if (res == null) {

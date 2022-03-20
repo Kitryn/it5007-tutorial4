@@ -7,6 +7,7 @@ import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
 import { ManifestResolver } from "../resolvers/ManifestResolver";
 import { ReservationResolver } from "../resolvers/ReservationResolver";
+import { BlacklistResolver } from "../resolvers/BlacklistResolver";
 
 async function main() {
   const PORT = process.env.PORT ?? 3000;
@@ -30,7 +31,7 @@ async function main() {
   const app = express();
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [ManifestResolver, ReservationResolver],
+      resolvers: [ManifestResolver, ReservationResolver, BlacklistResolver],
     }),
     context: ({ req, res }) => ({ req, res }),
   });

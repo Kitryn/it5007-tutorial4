@@ -2,7 +2,8 @@ import mongoose from "mongoose";
 import { ObjectId } from "mongodb";
 import { getModelForClass, prop, ReturnModelType } from "@typegoose/typegoose";
 import { Field, ID, ObjectType } from "type-graphql";
-import { createRandomReservation, Reservation } from "./Reservation";
+import { Reservation } from "./Reservation";
+import { createRandomReservation } from "@it5007-tutorial4/common";
 
 @ObjectType()
 export class Manifest {
@@ -123,7 +124,7 @@ export function createRandomManifests(num: number): Manifest[] {
         .forEach((_) => {
           const sn = getRandomSeatNumber(m);
           const dt = new Date(addDays(m.date, -Math.floor(Math.random() * 30)).getTime() + randomTime(baseTimeMs));
-          m.seats.push(createRandomReservation(sn, dt));
+          m.seats.push(createRandomReservation(sn, dt) as Reservation); // hacky! unable to resolve import issues at this time
         });
       return m;
     });

@@ -4,6 +4,8 @@ services:
   webapp:
     build:
       context: .
+      args:
+        migrate: "YES"
     ports:
       - 3000:3000
     environment:

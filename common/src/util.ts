@@ -48,3 +48,12 @@ export function randomTel() {
   const n2 = Math.floor(Math.random() * 10000).toString();
   return `9${n1.padStart(3, "0")} ${n2.padStart(4, "0")}`;
 }
+
+export function createRandomReservation(sn: number, dt?: Date) {
+  return {
+    sn,
+    name: randomName(),
+    phone: randomTel(),
+    ...(dt ? { date: dt } : {}),
+  };
+}

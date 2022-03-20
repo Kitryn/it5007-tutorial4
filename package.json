@@ -7,10 +7,12 @@
   "private": true,
   "workspaces": [
     "client",
+    "common",
     "server"
   ],
   "scripts": {
-    "server:build": "yarn workspace @it5007-tutorial4/server build",
+    "server:build": "yarn workspace @it5007-tutorial4/common build && yarn workspace @it5007-tutorial4/server build",
+    "client:build": "yarn workspace @it5007-tutorial4/client build",
     "dbtest": "yarn workspace @it5007-tutorial4/server dbtest",
     "dev": "yarn workspace @it5007-tutorial4/server dev",
     "start": "echo 'Run Start'"

@@ -1,0 +1,13 @@
+.has-dropdown:focus-within .dropdown {
+  @apply opacity-100 pointer-events-auto;
+}
+
+.dropdown {
+  @apply absolute opacity-0 z-10 bg-slate-600 transition-opacity 
+      min-w-fit w-20 p-1 right-0 text-base justify-around rounded-lg top-10 pointer-events-none
+      shadow-lg;
+}
+
+.dropdown button {
+  @apply p-1 border-solid border-b-2 rounded-sm
+}

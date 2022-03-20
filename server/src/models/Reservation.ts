@@ -1,6 +1,6 @@
 import { prop } from "@typegoose/typegoose";
 import { Field, ObjectType, Int, InputType } from "type-graphql";
-import { randomName, randomTel } from "../util";
+import { randomName, randomTel } from "@it5007-tutorial4/common";
 
 @ObjectType()
 export class Reservation {
@@ -31,15 +31,4 @@ export class ReservationInput implements Partial<Reservation> {
 
   @Field()
   phone!: string;
-}
-
-export function createRandomReservation(sn: number, dt?: Date): Reservation {
-  dt = dt ? dt : new Date();
-
-  return {
-    sn,
-    name: randomName(),
-    phone: randomTel(),
-    date: dt,
-  };
 }

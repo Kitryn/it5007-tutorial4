@@ -5,6 +5,7 @@ import {
   ReservationInput as ReservationInputModel,
   DeletedConfirmation as DeletedConfirmationModel,
   ReservationConfirmation as ReservationConfirmationModel,
+  BlacklistEntry as BlacklistEntryModel,
 } from "@it5007-tutorial4/server";
 
 export interface Manifest extends ManifestModel {
@@ -18,6 +19,8 @@ export interface ReservationInput extends ReservationInputModel {}
 export interface DeletedConfirmation extends DeletedConfirmationModel {}
 
 export interface ReservationConfirmation extends ReservationConfirmationModel {}
+
+export interface BlacklistEntry extends BlacklistEntryModel {}
 
 export const MAX_SEATS_PER_TRAIN = 25;
 export const SEAT_NUMBERS = new Set(
@@ -82,5 +85,32 @@ export const DELETE_RESERVATION = gql`
         status
       }
     }
+  }
+`;
+
+export const GET_BLACKLIST = gql`
+  query Query {
+    getBlacklist {
+      _id
+      name
+    }
+  }
+`;
+
+export const ADD_TO_BLACKLIST = gql`
+  mutation AddNameToBlacklist($name: String!) {
+    addNameToBlacklist(name: $name)
+  }
+`;
+
+export const DELETE_NAME_FROM_BLACKLIST = gql`
+  mutation DeleteNameFromBlacklist($name: String!) {
+    deleteNameFromBlacklist(name: $name)
+  }
+`;
+
+export const DELETE_ALL_FROM_BLACKLIST = gql`
+  mutation Mutation {
+    deleteAllFromBlacklist
   }
 `;

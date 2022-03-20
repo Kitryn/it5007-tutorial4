@@ -6,8 +6,13 @@ import NavBarItem from "./components/NavBarItem";
 import { ApolloError, useMutation, useQuery } from "@apollo/client";
 import {
   ADD_RESERVATION,
+  ADD_TO_BLACKLIST,
+  BlacklistEntry,
   DeletedConfirmation,
+  DELETE_ALL_FROM_BLACKLIST,
+  DELETE_NAME_FROM_BLACKLIST,
   DELETE_RESERVATION,
+  GET_BLACKLIST,
   Manifest,
   MANIFESTS,
   Reservation,
@@ -43,6 +48,16 @@ function App() {
     };
   });
 
+  // Load all blacklist
+  const { data: dataBlacklist, refetch: refetchBlacklist } =
+    useQuery<{ getBlacklist: BlacklistEntry[] }>(GET_BLACKLIST);
+
+  const blacklist = new Set(dataBlacklist?.getBlacklist?.map((b) => b.name) ?? []);
+
+  const [addToBlacklist] = useMutation<{ addNameToBlacklist: boolean }>(ADD_TO_BLACKLIST);
+  const [deleteNameFromBlacklist] = useMutation<{ deleteNameFromBlacklist: boolean }>(DELETE_NAME_FROM_BLACKLIST);
+  const [deleteAllFromBlacklist] = useMutation<{ deleteAllFromBlacklist: number }>(DELETE_ALL_FROM_BLACKLIST);
+
   // Reset all manifests
   const [resetAllMutation] = useMutation<{ resetAllManifests: boolean }>(RESET_ALL);
 
@@ -70,6 +85,13 @@ function App() {
   /**
    * Callbacks to handle state
    */
+  const addBlacklist = async (name: string) => {
+    await addToBlacklist({ variables: { name } });
+  };
+  const deleteNameBlacklist = async (name: string) => {
+    await deleteNameFromBlacklist({ variables: { name } });
+  };
+
   const [activeManifestId, setActiveManifestId] = useState<string | null>(null);
   const activeManifest =
     manifests != null && activeManifestId != null
@@ -136,6 +158,9 @@ function App() {
             addReservation={addReservation}
             deleteReservations={deleteReservations}
             apolloError={gqlError}
+            blacklist={blacklist}
+            addToBlacklist={addBlacklist}
+            deleteNameFromBlacklist={deleteNameBlacklist}
           />
         )}
       </div>

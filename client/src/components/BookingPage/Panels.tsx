@@ -1,6 +1,7 @@
 import { ApolloError } from "@apollo/client";
 import { useState } from "react";
 import { Manifest, Reservation } from "../../models";
+import AddBlacklistPane from "./AddBlacklistPane";
 import AddTravelerPane from "./AddTravelerPane";
 import ManifestPane from "./ManifestPane";
 
@@ -10,19 +11,26 @@ export default function Panels({
   deleteTraveler,
   selectedSeat,
   apolloError,
+  blacklist,
+  addToBlacklist,
+  deleteNameFromBlacklist,
 }: {
   manifest: Manifest;
   addTraveler: (r?: Omit<Reservation, "date">) => boolean;
   deleteTraveler: (sn: number[]) => void;
   selectedSeat: number | null;
   apolloError?: ApolloError | Error;
+  blacklist: Set<string>;
+  addToBlacklist: (name: string) => Promise<void>;
+  deleteNameFromBlacklist: (name: string) => Promise<void>;
 }) {
   const [activePanelIndex, setActivePanelIndex] = useState<number>(0);
 
-  const panels = ["Manifest", "Add Traveler"];
+  const panels = ["Manifest", "Add Traveler", "Add to Blacklist", "Remove from Blacklist"];
   const panelComponents = [
     <ManifestPane manifest={manifest} deleteTraveler={deleteTraveler} />,
     <AddTravelerPane addTraveler={addTraveler} selectedSeat={selectedSeat} apolloError={apolloError} />,
+    <AddBlacklistPane addToBlacklist={addToBlacklist} />,
   ];
 
   return (

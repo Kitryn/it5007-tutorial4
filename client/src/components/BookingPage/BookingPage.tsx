@@ -12,11 +12,17 @@ export default function BookingPage({
   addReservation,
   deleteReservations,
   apolloError,
+  blacklist,
+  addToBlacklist,
+  deleteNameFromBlacklist,
 }: {
   activeManifest: Manifest;
   addReservation: (manifestId: string, reservation: Omit<Reservation, "date">) => Promise<void>;
   deleteReservations: (manifestId: string, seats: number[]) => Promise<void>;
   apolloError?: ApolloError | Error;
+  blacklist: Set<string>;
+  addToBlacklist: (name: string) => Promise<void>;
+  deleteNameFromBlacklist: (name: string) => Promise<void>;
 }) {
   const [selectedSeat, setSelectedSeat] = useState<number | null>(null);
 
@@ -53,6 +59,9 @@ export default function BookingPage({
           deleteTraveler={deleteTravelerOnActiveManifest}
           selectedSeat={selectedSeat}
           apolloError={apolloError}
+          blacklist={blacklist}
+          addToBlacklist={addToBlacklist}
+          deleteNameFromBlacklist={deleteNameFromBlacklist}
         />
       </div>
     </div>

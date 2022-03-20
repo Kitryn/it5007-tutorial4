@@ -35,7 +35,7 @@ export class BlacklistResolver {
     return true;
   }
 
-  @Mutation(() => Number)
+  @Mutation(() => Int)
   async deleteAllFromBlacklist(): Promise<number> {
     const res = await BlacklistEntryModel.deleteMany({});
     if (res == null) {

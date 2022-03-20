@@ -147,6 +147,13 @@ export class Manifest {
   @prop({ required: true, default: [], type: () => [Reservation] })
   seats!: Reservation[];
 }
+
+export class BlacklistEntry {
+  _id?: string;
+
+  @prop({ required: true, index: true, unique: true })
+  name!: string;
+}
 ```
 
 ## Teardown
